@@ -5,7 +5,6 @@ the diagnostic of the current line in the echo / message area.
 
 ![Example of Chime](screenshot.png)
 
-
 ## Configuration
 
 This plugin aims to do everything _the Neovim way_. Because it handles
@@ -39,11 +38,10 @@ Chime can be enabled or disabled on the fly:
 ## Format
 
 Set the format of the diagnostic message with the `format` config option. It
-should be a value that receives a diagnostic and outputs either a string,
-echoed as-is to message area, or a list of colored chunks (like the first
-argument of `vim.api.nvim_echo()`.
+should be a function that receives a diagnostic and outputs either a string or
+a list of colored chunks (like the first argument of `vim.api.nvim_echo()`).
 
-An example that returns the formatted string `[E] Unused local. (luals)`:
+An example that returns the formatted string `[INFO] Unused functions. (luals)`:
 
 ```lua
 vim.diagnostic.config({
@@ -51,7 +49,7 @@ vim.diagnostic.config({
     format = function(diagnostic)
       return ('[%s] %s (%s)'):format(
         -- this assumes the default sign text
-        vim.diagnostic.config().signs.text[diagnostic.severity],
+        vim.diagnostic.severity[diagnostic.severity],
         diagnostic.message,
         diagnostic.source,
       )
@@ -67,21 +65,18 @@ source in gray:
 vim.diagnostic.config({
   chime = {
     format = function(diagnostic)
-      local signs = vim.diagnostic.config().signs
-      local colors = {
-        'DiagnosticError',
-        'DiagnosticWarn',
-        'DiagnosticInfo',
-        'DiagnosticHint',
-      }
+      local severity_text = vim.diagnostic.severity[diagnostic.severity]
+      local severity_color = ({
+          'DiagnosticError',
+          'DiagnosticWarn',
+          'DiagnosticInfo',
+          'DiagnosticHint',
+      })[diagnostic.severity]
+
       return {
-        { '[' },
-        { signs.text[diagnostic.severity], colors[diagnostic.severity] },
-        { '] ' },
+        { ('[%s] '):format(severity_text), severity_color },
         { diagnostic.message },
-        { ' (' },
-        { diagnostic.source, "NvimDarkGray2" },
-        { ')' },
+        { (' (%s)'):format(diagnostic.source), "Comment" },
       }
     end
   }
@@ -90,4 +85,10 @@ vim.diagnostic.config({
 
 ## Severity
 
-The severity filter. See `:h diagnostic-severity`.
+Filter on severities, for example only show errors in Chime. See `:h
+diagnostic-severity`.
+
+## Severity Sort
+
+Sort by severity. It is recommended to set this to true. See `:h
+vim.diagnostic.Opts`.

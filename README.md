@@ -88,7 +88,8 @@ vim.diagnostic.config({
 
       return {
         { ('[%s] '):format(severity_text), severity_color },
-        { diagnostic.message },
+        -- prevent "Press enter" prompts by only showing first line
+        { vim.split(diagnostic.message, '\n')[1] },
         { (' (%s)'):format(diagnostic.source), "Comment" },
       }
     end

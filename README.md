@@ -1,7 +1,9 @@
-# Chime
+# Chim
 
 Chime is a very little plugin that does a one straightforward thing: it shows
 the diagnostic of the current line in the echo / message area.
+
+![Example of Chime](screenshot.png)
 
 
 ## Configuration

@@ -1,9 +1,20 @@
-# Chim
+# Chime
 
 Chime is a very little plugin that does a one straightforward thing: it shows
 the diagnostic of the current line in the echo / message area.
 
 ![Example of Chime](screenshot.png)
+
+## Installation
+
+To install, use your favorite plugin manager. For example with lazy.nvim:
+
+```lua
+{ 'yochem/chime.nvim' }
+```
+
+For lazy-loading you could try `event = 'DiagnosticsChanged'`, although the
+plugin should be very light.
 
 ## Configuration
 

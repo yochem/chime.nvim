@@ -106,3 +106,11 @@ Filter on severities, for example only show errors in Chime. See
 
 Sort by severity. It is recommended to set this to true. See
 [`vim.diagnostic.Opts`](https://neovim.io/doc/user/diagnostic.html#vim.diagnostic.Opts).
+
+# TODO
+
+- Add option to always trim messages to fit screen. [Kill "Press ENTER" with
+  fire](https://github.com/neovim/neovim/issues/22478).
+- Better default format.
+- Resize `cmdheight` temporary to allow multiple diagnostics at once, without
+  press enter prompt?

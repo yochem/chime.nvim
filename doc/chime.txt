@@ -1,0 +1,82 @@
+*chime.txt*				Diagnostic handler for the echo area.
+
+=============================================================================
+Chime								      *chime*
+
+
+Chime is a diagnostic handler that displays messages in the echo or message
+area, in the bottom of the window.
+
+=============================================================================
+Configuration						*chime-configuration*
+
+This plugin provides a |diagnostic-handler| and is configured using
+|vim.diagnostic.config()|.
+
+It supports the following fields:
+>lua
+  vim.diagnostic.config({
+    chime = {
+      severity_sort = false,
+      severity = nil,
+      format = function()
+	...
+      end,
+    }
+  })
+<
+Each field is explained in the sections below.
+
+Severity ~
+							      *chime-severity*
+Filter on severities. See |diagnostic-severity| on how to implement it.
+
+Severity Sort ~
+							 *chime-severity-sort*
+Sort by severity. It is recommended to set this to true. See
+|vim.diagnostic.Opts|.
+
+Format ~
+								*chime-format*
+Function that receives a |vim.Diagnostic| and formats it. Can return a string
+or a list of highlighted chunks, as the first argument of |nvim_echo()|. A
+simple example that returns a string:
+>lua
+  vim.diagnostic.config({
+    chime = {
+      format = function(diagnostic)
+	return ('[%s] %s (%s)'):format(
+	  -- this assumes the default sign text
+	  vim.diagnostic.severity[diagnostic.severity],
+	  diagnostic.message,
+	  diagnostic.source,
+	)
+      end
+    }
+  })
+<
+And a complexer example that returns chunks:
+>lua
+  vim.diagnostic.config({
+    chime = {
+      format = function(diagnostic)
+	local severity_text = vim.diagnostic.severity[diagnostic.severity]
+	local severity_color = ({
+	    'DiagnosticError',
+	    'DiagnosticWarn',
+	    'DiagnosticInfo',
+	    'DiagnosticHint',
+	})[diagnostic.severity]
+
+	return {
+	  { ('[%s] '):format(severity_text), severity_color },
+	  -- prevent "Press enter" prompts by only showing first line
+	  { vim.split(diagnostic.message, '\n')[1] },
+	  { (' (%s)'):format(diagnostic.source), "Comment" },
+	}
+      end
+    }
+  })
+<
+
+vim:tw=78:ts=8:noet:ft=help:norl:

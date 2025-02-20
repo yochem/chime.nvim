@@ -1,5 +1,5 @@
 vim.diagnostic.handlers['chime'] = {
 	show = function()
-		require('chime').show()
+		require('chime').handler()
 	end
 }

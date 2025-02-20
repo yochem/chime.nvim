@@ -1,4 +1,4 @@
-local clear_augroup = vim.api.nvim_create_augroup('chime.clear', {})
+local should_clear = false
 
 local M = {}
 
@@ -32,22 +32,11 @@ local function config(key)
 	return vim.F.if_nil(chime[key], global[key], default[key])
 end
 
---- Create an empty message that is only printed once.
-local function clear_msg_area()
-	vim.api.nvim_create_autocmd('User', {
-		once = true,
-		group = clear_augroup,
-		callback = function()
-			vim.api.nvim_echo({ { '' } }, false, {})
-		end,
-	})
-end
-
 --- @param diagnostics vim.Diagnostic[]
 local function severity_sort(diagnostics)
 	local sort = config('severity_sort')
 	local reverse = type(sort) == 'table' and sort.reverse == true
-	table.sort(diagnostics, function (a, b)
+	table.sort(diagnostics, function(a, b)
 		if reverse then
 			return a.severity > b.severity
 		else
@@ -56,9 +45,10 @@ local function severity_sort(diagnostics)
 	end)
 end
 
-local function line_diagnostic()
-	-- clear first
-	vim.api.nvim_exec_autocmds('User', { group = clear_augroup })
+function M.show()
+	if should_clear then
+		vim.cmd.echo()
+	end
 
 	local lnum, _ = unpack(vim.api.nvim_win_get_cursor(0))
 	local diagnostics = vim.diagnostic.get(0, {
@@ -77,13 +67,13 @@ local function line_diagnostic()
 		-- TODO: check if otherwise table of pairs
 		local chunks = type(msg) == 'string' and { { vim.split(msg, '\n')[1] } } or msg
 		vim.api.nvim_echo(chunks, false, {})
-		clear_msg_area()
+		should_clear = true
 	end
 end
 
-function M.show()
+function M.handler()
 	local augroup = vim.api.nvim_create_augroup('chime', {})
-	vim.api.nvim_create_autocmd('CursorMoved', {
+	vim.api.nvim_create_autocmd({'CursorMoved', 'DiagnosticChanged' }, {
 		group = augroup,
 		callback = function()
 			-- self-destruct if explicitly set to false
@@ -91,7 +81,7 @@ function M.show()
 				vim.api.nvim_del_augroup_by_id(augroup)
 				return
 			end
-			line_diagnostic()
+			M.show()
 		end,
 	})
 end

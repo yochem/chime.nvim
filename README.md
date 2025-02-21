@@ -1,3 +1,6 @@
+> [!WARNING]
+> I'm not sure about the name yet, it might change in the near future.
+
 # Chime.nvim 🚦
 
 Chime is a very little plugin that does a one straightforward thing: it shows
@@ -117,6 +120,13 @@ Sort by severity. It is recommended to set this to true. See
 
 ## Manually Show Diagnostics
 
-May you wish to only manually show the diagnostics, disable the handler with
-`vim.diagnostic.config({ chime = false })` and map something to
-`require('chime').show()`.
+May you wish to only manually show the diagnostics, disable the handler and map
+the `show()` method yourself.
+
+```lua
+vim.diagnostic.config({ chime = false })
+
+vim.keymap.set('n', '<leader>d', function()
+  require('chime').show()
+end)
+```

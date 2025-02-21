@@ -1,5 +1,3 @@
-local should_clear = false
-
 local M = {}
 
 --- @param diagnostic vim.Diagnostic
@@ -12,7 +10,7 @@ local function format(diagnostic)
 	)
 	local win_width = vim.api.nvim_win_get_width(0)
 	if #fmt >= win_width - 10 then
-		fmt = fmt:sub(0, win_width - 15) .. " …"
+		fmt = fmt:sub(0, win_width - 15) .. ' …'
 	end
 	return fmt
 end
@@ -45,14 +43,17 @@ local function severity_sort(diagnostics)
 	end)
 end
 
-function M.show()
-	if should_clear then
-		vim.cmd.echo()
-	end
+local function clear_msg_on_move()
+	vim.api.nvim_create_autocmd('CursorMoved', {
+		command = 'echo',
+		once = true,
+		group = vim.api.nvim_create_augroup('chime.clear', {}),
+	})
+end
 
-	local lnum, _ = unpack(vim.api.nvim_win_get_cursor(0))
+function M.show()
 	local diagnostics = vim.diagnostic.get(0, {
-		lnum = lnum - 1,
+		lnum = vim.fn.line('.') - 1,
 		severity = config('severity')
 	})
 
@@ -61,19 +62,19 @@ function M.show()
 			severity_sort(diagnostics)
 		end
 
-		-- TODO: config: severity_sort
 		local formatfunc = config('format')
 		local msg = formatfunc(diagnostics[1])
 		-- TODO: check if otherwise table of pairs
 		local chunks = type(msg) == 'string' and { { vim.split(msg, '\n')[1] } } or msg
+
 		vim.api.nvim_echo(chunks, false, {})
-		should_clear = true
+		clear_msg_on_move()
 	end
 end
 
 function M.handler()
 	local augroup = vim.api.nvim_create_augroup('chime', {})
-	vim.api.nvim_create_autocmd({'CursorMoved', 'DiagnosticChanged' }, {
+	vim.api.nvim_create_autocmd({ 'CursorMoved', 'DiagnosticChanged' }, {
 		group = augroup,
 		callback = function()
 			-- self-destruct if explicitly set to false

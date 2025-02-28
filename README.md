@@ -3,8 +3,10 @@
 
 # Chime.nvim 🚦
 
-Chime is a very little plugin that does a one straightforward thing: it shows
-the diagnostic of the current line in the echo / message area.
+Chime is a very little diagnostic handler that echoes the diagnostics of the
+current line to the echo / message area.
+
+Chime is very configurable and aims to be as Neovim native as possible.
 
 ![Example of Chime](screenshot.png)
 
@@ -50,7 +52,7 @@ Chime can be enabled or disabled on the fly:
 :lua vim.diagnostic.config({ chime = true })
 ```
 
-## Format
+### Format
 
 Set the format of the diagnostic message with the `format` config option. It
 should be a function that receives a diagnostic and outputs either a string or
@@ -100,25 +102,17 @@ vim.diagnostic.config({
 })
 ```
 
-## Severity
+### Severity
 
 Filter on severities, for example only show errors in Chime. See
 [`diagnostic-severity`](https://neovim.io/doc/user/diagnostic.html#diagnostic-severity).
 
-## Severity Sort
+### Severity Sort
 
 Sort by severity. It is recommended to set this to true. See
 [`vim.diagnostic.Opts`](https://neovim.io/doc/user/diagnostic.html#vim.diagnostic.Opts).
 
-## TODO
-
-- Add option to always trim messages to fit screen. [Kill "Press ENTER" with
-  fire](https://github.com/neovim/neovim/issues/22478).
-- Better default format.
-- Resize `cmdheight` temporary to allow multiple diagnostics at once, without
-  press enter prompt?
-
-## Manually Show Diagnostics
+### Manually Show Diagnostics
 
 May you wish to only manually show the diagnostics, disable the handler and map
 the `show()` method yourself.
@@ -130,3 +124,21 @@ vim.keymap.set('n', '<leader>d', function()
   require('chime').show()
 end)
 ```
+
+## Comparison
+
+The main functionality of this plugin is inspired by
+[seblyng/nvim-ech-diagnostics](https://github.com/seblyng/nvim-echo-diagnostics),
+which I have used with pleasure for some years. This plugin aims to have the
+same functionality as nvim-echo-diagnostics, but in a more modern Neovim way
+(by being a diagnostic handler). I figured this was to much of a breaking
+change to upstream to nvim-echo-diagnostics, so here we are.
+
+## TODO
+
+- Add option to always trim messages to fit screen. [Kill "Press ENTER" with
+  fire](https://github.com/neovim/neovim/issues/22478).
+- Better default format.
+- Resize `cmdheight` temporary to allow multiple diagnostics at once, without
+  press enter prompt?
+- Fix `update_in_insert`

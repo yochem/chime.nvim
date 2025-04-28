@@ -1,6 +1,10 @@
 chime	chime.txt	/*chime*
 chime-configuration	chime.txt	/*chime-configuration*
 chime-format	chime.txt	/*chime-format*
+chime-manual	chime.txt	/*chime-manual*
 chime-severity	chime.txt	/*chime-severity*
 chime-severity-sort	chime.txt	/*chime-severity-sort*
+chime-show	chime.txt	/*chime-show*
+chime-toggle	chime.txt	/*chime-toggle*
+chime-trim	chime.txt	/*chime-trim*
 chime.txt	chime.txt	/*chime.txt*

@@ -1,5 +1,23 @@
 local M = {}
 
+--- Trim message to fit the |v:echospace| area.
+--- @param msg_chunks { [1]: string, [2]: string }[]
+--- @return { [1]: string, [2]: string }[]
+local function trim_msg(msg_chunks)
+	local curlen = 0
+	local maxlen = vim.v.echospace
+
+	for i, chunk in ipairs(msg_chunks) do
+		local text, _ = unpack(chunk)
+		if curlen + #text > maxlen then
+			msg_chunks[i][1] = text:sub(0, maxlen - curlen - 1) .. '…'
+		end
+		curlen = curlen + #text
+	end
+
+	return msg_chunks
+end
+
 --- @param diagnostic vim.Diagnostic
 --- @return string
 local function default_format(diagnostic)
@@ -8,10 +26,6 @@ local function default_format(diagnostic)
 		diagnostic.message,
 		diagnostic.source
 	)
-	local win_width = vim.api.nvim_win_get_width(0)
-	if #fmt >= win_width - 10 then
-		fmt = fmt:sub(0, win_width - 15) .. ' …'
-	end
 	return fmt
 end
 
@@ -19,9 +33,10 @@ end
 local function config(key)
 	-- straight from :h vim.diagnostic.Opts
 	local default = {
-		severity_sort = false,
+		format = default_format,
 		severity = nil,
-		format = format,
+		severity_sort = false,
+		trim = true,
 	}
 	local global = vim.diagnostic.config() or {}
 	local chime = global['chime']
@@ -63,6 +78,10 @@ function M.show()
 		local msg = formatfunc(diagnostics[1])
 		-- TODO: this just assumes that it's a table otherwise
 		local chunks = type(msg) == 'string' and { { vim.split(msg, '\n')[1] } } or msg
+
+		if config('trim') then
+			chunks = trim_msg(chunks)
+		end
 
 		vim.api.nvim_echo(chunks, false, {})
 		clear_msg_on_move()

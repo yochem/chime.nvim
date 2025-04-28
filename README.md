@@ -1,6 +1,3 @@
-> [!WARNING]
-> I'm not sure about the name yet, it might change in the near future.
-
 # Chime.nvim 🚦
 
 Chime is a very little diagnostic handler that echoes the diagnostics of the
@@ -36,20 +33,12 @@ for more info.
 ```lua
 vim.diagnostic.config({
   chime = {
-    severity_sort = false,
-    severity = nil,
     format = ...,
+    severity = nil,
+    severity_sort = false,
+    trim = true,
   }
 })
-```
-
-Chime can be enabled or disabled on the fly:
-
-```vim
-" disable Chime
-:lua vim.diagnostic.config({ chime = false })
-" and enable again
-:lua vim.diagnostic.config({ chime = true })
 ```
 
 ### Format
@@ -112,7 +101,22 @@ Filter on severities, for example only show errors in Chime. See
 Sort by severity. It is recommended to set this to true. See
 [`vim.diagnostic.Opts`](https://neovim.io/doc/user/diagnostic.html#vim.diagnostic.Opts).
 
-### Manually Show Diagnostics
+### Trim
+
+The trim option defaults to `true` and trims the diagnostic message to fit
+`|v:echospace|`, ensuring you'll never see the [`Press
+ENTER`](https://github.com/neovim/neovim/issues/22478) prompt.
+
+## Toggle or Disable Chime
+
+Chime can be enabled or disabled on the fly:
+
+```vim
+" disable Chime
+:lua vim.diagnostic.config({ chime = false })
+" and enable again
+:lua vim.diagnostic.config({ chime = true })
+```
 
 May you wish to only manually show the diagnostics, disable the handler and map
 the `show()` method yourself.
@@ -136,9 +140,7 @@ change to upstream to nvim-echo-diagnostics, so here we are.
 
 ## TODO
 
-- Add option to always trim messages to fit screen. [Kill "Press ENTER" with
-  fire](https://github.com/neovim/neovim/issues/22478).
-- Better default format.
+- Richer default format.
 - Resize `cmdheight` temporary to allow multiple diagnostics at once, without
   press enter prompt?
 - Fix `update_in_insert`

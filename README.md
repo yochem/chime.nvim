@@ -142,3 +142,4 @@ change to upstream to nvim-echo-diagnostics, so here we are.
 - Resize `cmdheight` temporary to allow multiple diagnostics at once, without
   press enter prompt?
 - Fix `update_in_insert`
+- checkhealth support

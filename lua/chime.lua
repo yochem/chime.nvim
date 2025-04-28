@@ -2,7 +2,7 @@ local M = {}
 
 --- @param diagnostic vim.Diagnostic
 --- @return string
-local function format(diagnostic)
+local function default_format(diagnostic)
 	local fmt = ('[%s] %s (%s)'):format(
 		vim.diagnostic.severity[diagnostic.severity],
 		diagnostic.message,
@@ -30,16 +30,13 @@ local function config(key)
 	return vim.F.if_nil(chime[key], global[key], default[key])
 end
 
+--- Sorts diagnostics based on severity *in-place*.
 --- @param diagnostics vim.Diagnostic[]
 local function severity_sort(diagnostics)
 	local sort = config('severity_sort')
 	local reverse = type(sort) == 'table' and sort.reverse == true
 	table.sort(diagnostics, function(a, b)
-		if reverse then
-			return a.severity > b.severity
-		else
-			return a.severity < b.severity
-		end
+		return reverse and (a.severity > b.severity) or (a.severity < b.severity)
 	end)
 end
 
@@ -64,7 +61,7 @@ function M.show()
 
 		local formatfunc = config('format')
 		local msg = formatfunc(diagnostics[1])
-		-- TODO: check if otherwise table of pairs
+		-- TODO: this just assumes that it's a table otherwise
 		local chunks = type(msg) == 'string' and { { vim.split(msg, '\n')[1] } } or msg
 
 		vim.api.nvim_echo(chunks, false, {})
@@ -74,10 +71,10 @@ end
 
 function M.handler()
 	local augroup = vim.api.nvim_create_augroup('chime', {})
-	vim.api.nvim_create_autocmd({ 'CursorMoved', 'DiagnosticChanged' }, {
+	vim.api.nvim_create_autocmd({ 'WinResized', 'CursorMoved', 'DiagnosticChanged' }, {
 		group = augroup,
 		callback = function()
-			-- self-destruct if explicitly set to false
+			-- self-destruct if explicitly set to false (and not just `nil`)
 			if config('chime') == false then
 				vim.api.nvim_del_augroup_by_id(augroup)
 				return

@@ -59,7 +59,7 @@ end
 
 local function clear_msg_on_move()
 	vim.api.nvim_create_autocmd('CursorMoved', {
-		command = 'echo',
+		command = [[echo " "]],
 		once = true,
 		group = vim.api.nvim_create_augroup('chime.clear', {}),
 	})

@@ -9,7 +9,9 @@ local function trim_msg(msg_chunks)
 
 	for i, chunk in ipairs(msg_chunks) do
 		local text, _ = unpack(chunk)
-		if curlen + #text > maxlen then
+		if curlen > maxlen then
+			msg_chunks[i][1] = ''
+		elseif curlen + #text > maxlen then
 			msg_chunks[i][1] = text:sub(0, maxlen - curlen - 1) .. '…'
 		end
 		curlen = curlen + #text
@@ -90,7 +92,7 @@ end
 
 function M.handler()
 	local augroup = vim.api.nvim_create_augroup('chime', {})
-	vim.api.nvim_create_autocmd({ 'WinResized', 'CursorMoved', 'DiagnosticChanged' }, {
+	vim.api.nvim_create_autocmd({ 'WinResized', 'CursorMoved'}, {
 		group = augroup,
 		callback = function()
 			-- self-destruct if explicitly set to false (and not just `nil`)

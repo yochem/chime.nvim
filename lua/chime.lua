@@ -44,7 +44,7 @@ local function config(key)
 	local chime = global['chime']
 	if type(chime) ~= 'table' then chime = {} end
 
-	return vim.F.if_nil(chime[key], global[key], default[key])
+	return chime[key] or global[key] or default[key]
 end
 
 --- Sorts diagnostics based on severity *in-place*.
@@ -59,7 +59,9 @@ end
 
 local function clear_msg_on_move()
 	vim.api.nvim_create_autocmd('CursorMoved', {
-		command = [[echo " "]],
+		callback = function()
+			vim.api.nvim_echo({ { '' } }, false, { kind = 'empty' })
+		end,
 		once = true,
 		group = vim.api.nvim_create_augroup('chime.clear', {}),
 	})
@@ -80,19 +82,18 @@ function M.show()
 		local msg = formatfunc(diagnostics[1])
 		-- TODO: this just assumes that it's a table otherwise
 		local chunks = type(msg) == 'string' and { { vim.split(msg, '\n')[1] } } or msg
-
 		if config('trim') then
 			chunks = trim_msg(chunks)
 		end
 
-		vim.api.nvim_echo(chunks, false, {})
+		vim.api.nvim_echo(chunks, false, { kind = 'echo' })
 		clear_msg_on_move()
 	end
 end
 
 function M.handler()
 	local augroup = vim.api.nvim_create_augroup('chime', {})
-	vim.api.nvim_create_autocmd({ 'WinResized', 'CursorMoved'}, {
+	vim.api.nvim_create_autocmd({ 'WinResized', 'CursorMoved' }, {
 		group = augroup,
 		callback = function()
 			-- self-destruct if explicitly set to false (and not just `nil`)

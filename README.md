@@ -105,7 +105,8 @@ Sort by severity. It is recommended to set this to true. See
 
 The trim option defaults to `true` and trims the diagnostic message to fit
 `|v:echospace|`, ensuring you'll never see the [`Press
-ENTER`](https://github.com/neovim/neovim/issues/22478) prompt.
+ENTER`](https://github.com/neovim/neovim/issues/22478) prompt. You might set
+this to `false` if you use the new extui / ui2 command line.
 
 ## Toggle or Disable Chime
 

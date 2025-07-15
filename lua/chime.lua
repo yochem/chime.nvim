@@ -44,7 +44,7 @@ local function config(key)
 	local chime = global['chime']
 	if type(chime) ~= 'table' then chime = {} end
 
-	return chime[key] or global[key] or default[key]
+	return vim.F.if_nil(chime[key], global[key], default[key])
 end
 
 --- Sorts diagnostics based on severity *in-place*.
@@ -60,7 +60,7 @@ end
 local function clear_msg_on_move()
 	vim.api.nvim_create_autocmd('CursorMoved', {
 		callback = function()
-			vim.api.nvim_echo({ { '' } }, false, { kind = 'empty' })
+			vim.api.nvim_echo({ { ' ' } }, false, { kind = 'empty' })
 		end,
 		once = true,
 		group = vim.api.nvim_create_augroup('chime.clear', {}),

@@ -1,13 +1,13 @@
-*chime.txt*				Diagnostic handler for the echo area.
+*chime.txt*				  Diagnostic handler for the echo area
 
-=============================================================================
-Chime								      *chime*
+==============================================================================
+Chime								       *chime*
 
 Chime is a diagnostic handler that displays messages in the echo area, usually
 the bottom of the screen.
 
-=============================================================================
-Configuration						*chime-configuration*
+==============================================================================
+Configuration						 *chime-configuration*
 
 This plugin provides a |diagnostic-handler| and is configured using
 |vim.diagnostic.config()|.

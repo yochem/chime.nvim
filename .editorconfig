@@ -5,7 +5,7 @@ end_of_line = lf
 insert_final_newline = true
 
 [*.lua]
-indent_style = tab
+indent_style = space
 indent_size = 2
 
 # for EmmyLuaCodeStyle / LuaLS
@@ -13,3 +13,4 @@ quote_style = single
 call_arg_parentheses = keep
 space_around_table_field_list = true
 space_after_comment_dash = true
+align_array_table = false

@@ -1,90 +1,83 @@
 *chime.txt*				  Diagnostic handler for the echo area
 
-==============================================================================
-Chime								       *chime*
+
+Chime                                                                  *chime*
 
 Chime is a diagnostic handler that displays messages in the echo area, usually
 the bottom of the screen.
 
+				       Type |gO| to see the table of contents.
+
 ==============================================================================
-Configuration						 *chime-configuration*
+Configuration                                            *chime-configuration*
 
-This plugin provides a |diagnostic-handler| and is configured using
-|vim.diagnostic.config()|.
-
-It has the following defaults: >lua
+This plugin registers a handler to |diagnostic-handlers| and is configured
+using |vim.diagnostic.config()|. It has the following structure: >lua
 
   vim.diagnostic.config({
     chime = {
-      format = function()
-	...
+      format = function(d)
+	-- format here
       end,
       severity = nil,
       severity_sort = false,
       trim = true,
     }
   })
-
+<
 Each field is explained in the sections below.
 
-Format ~
-								*chime-format*
-Function that receives a |vim.Diagnostic| and formats it. Can return a string
-or a list of highlighted chunks, as the first argument of |nvim_echo()|. A
-simple example that returns a string: >lua
+FORMAT                                                          *chime-format*
+A function that receives a |vim.Diagnostic| and formats it. Can return a
+string or a list of highlighted chunks, similar to the first argument of
+|nvim_echo()|. A simple example that returns a string: >lua
 
   vim.diagnostic.config({
     chime = {
-      format = function(diagnostic)
-	return ('[%s] %s (%s)'):format(
-	  -- this assumes the default sign text
-	  vim.diagnostic.severity[diagnostic.severity],
-	  diagnostic.message,
-	  diagnostic.source,
-	)
+      format = function(d)
+        return ('[%s] %s (%s)'):format(
+          vim.diagnostic.severity[diagnostic.severity],
+          diagnostic.message,
+          diagnostic.source,
+        )
       end
     }
   })
-
+<
 And a complexer example that returns chunks: >lua
 
   vim.diagnostic.config({
     chime = {
       format = function(diagnostic)
-	local severity_text = vim.diagnostic.severity[diagnostic.severity]
-	local severity_color = ({
-	    'DiagnosticError',
-	    'DiagnosticWarn',
-	    'DiagnosticInfo',
-	    'DiagnosticHint',
-	})[diagnostic.severity]
+        local severity_text = vim.diagnostic.severity[diagnostic.severity]
+        local severity_color = ({
+            'DiagnosticError',
+            'DiagnosticWarn',
+            'DiagnosticInfo',
+            'DiagnosticHint',
+        })[diagnostic.severity]
 
-	return {
-	  { ('[%s] '):format(severity_text), severity_color },
-	  -- prevent "Press enter" prompts by only showing first line
-	  { vim.split(diagnostic.message, '\n')[1] },
-	  { (' (%s)'):format(diagnostic.source), "Comment" },
-	}
+        return {
+          { ('[%s] '):format(severity_text), severity_color },
+          { diagnostic.message },
+          { (' (%s)'):format(diagnostic.source), "Comment" },
+        }
       end
     }
   })
-
-Severity ~
-							      *chime-severity*
+<
+SEVERITY                                                      *chime-severity*
 Filter on severities. See |diagnostic-severity| on how to implement it.
 
-Severity Sort ~
-							 *chime-severity-sort*
-Sort by severity. It is recommended to set this to true. See
+SEVERITY SORT                                            *chime-severity-sort*
+Sort by severity. It is recommended to set this to `true`. See
 |vim.diagnostic.Opts|.
 
-Trim ~
-								  *chime-trim*
+TRIM                                                              *chime-trim*
 Trim the diagnostic message to fit |v:echospace|, preventing the "Press ENTER"
-prompt.
+prompt on the old message grid. Does nothing if |ui2| is enabled.
 
-Show on keymap ~
-						   *chime-show* *chime-manual*
+SHOW ON KEYMAP                                     *chime-show* *chime-manual*
 To only show diagnostics manually, for example with a custom keymap, disable
 the handler and map `chime.show()`: >lua
 
@@ -93,7 +86,7 @@ the handler and map `chime.show()`: >lua
     require('chime').show()
   end)
 <
-								*chime-toggle*
+                                                                *chime-toggle*
 Chime can be toggled on the fly by its diagnostic handler: >vim
 
   " disable Chime
